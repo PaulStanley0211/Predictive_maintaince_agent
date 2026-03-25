@@ -1,0 +1,84 @@
+name: Test and Deploy
+
+# ── Triggers ──────────────────────────────────────────────────────────────────
+# Run on every push to main (to deploy) and on every PR targeting main
+# (to gate merges behind a passing test suite).
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── Job 1: Lint + Test ───────────────────────────────────────────────────────
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the repository at the triggering commit.
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Install the exact Python version used on Azure App Service (PYTHON:3.12).
+      # Matching versions avoids "works locally / breaks in prod" surprises.
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"   # cache the pip download cache between runs
+
+      # Install the project in editable mode together with all dev extras
+      # (pytest, pytest-asyncio, ruff, httpx).  The [dev] group is defined
+      # in pyproject.toml.
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      # Ruff enforces import order (I), pyflakes (F), pycodestyle (E), and
+      # upgrade hints (UP) — see pyproject.toml [tool.ruff.lint].
+      # Fail fast: if the code won't lint, don't bother running tests.
+      - name: Lint with ruff
+        run: ruff check src/ tests/
+
+      # Run the full test suite.  conftest.py sets ANTHROPIC_API_KEY to a
+      # dummy value and stubs ChromaDB, so no real secrets are required here.
+      - name: Run tests
+        run: pytest tests/ -v
+
+  # ── Job 2: Deploy to Azure App Service ───────────────────────────────────────
+  deploy:
+    # Only deploy when tests pass AND we are on the main branch.
+    # PRs trigger the test job above but never reach this job.
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      # A fresh checkout is required; the deploy job runs in a separate runner
+      # and does not share the workspace from the test job.
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # azure/webapps-deploy@v3 zips the repository and pushes it to the
+      # Kudu SCM endpoint.  The .deployment file in the repo root sets
+      # SCM_DO_BUILD_DURING_DEPLOYMENT=true so Azure runs `pip install -r
+      # requirements.txt` automatically after the zip is extracted.
+      #
+      # Prerequisites (done once in Azure Portal / CLI — not automated here):
+      #   1. Create an App Service with runtime PYTHON:3.12 on Linux.
+      #   2. Download the publish profile and store it as the repository
+      #      secret AZURE_WEBAPP_PUBLISH_PROFILE.
+      #   3. Set ANTHROPIC_API_KEY (and any other required env vars) as
+      #      App Service application settings in the Portal or via:
+      #      az webapp config appsettings set --name <app> --resource-group <rg>
+      #        --settings ANTHROPIC_API_KEY=<value>
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          # Must match the App Service name created in Azure Portal.
+          app-name: pred-maint-app
+          # Publish profile downloaded from Portal → App Service → Get publish profile.
+          # Stored as a GitHub repository secret (Settings → Secrets → Actions).
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          # Tell Azure which command to run to start the app.
+          # Equivalent to setting the startup command in the Portal.
+          startup-command: "gunicorn src.api.main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000"

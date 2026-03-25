@@ -1,0 +1,54 @@
+# Environment variables — NEVER commit these
+.env
+.env.local
+.env.*.local
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+*.egg
+
+# Ruff cache
+.ruff_cache/
+
+# Pytest cache
+.pytest_cache/
+.cache/
+
+# Coverage
+.coverage
+htmlcov/
+coverage.xml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ChromaDB local storage
+chroma_db/
+*.chroma
+
+# Streamlit
+.streamlit/
+
+# Jupyter (if used for exploration)
+*.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db

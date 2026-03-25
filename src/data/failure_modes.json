@@ -1,0 +1,84 @@
+{
+  "failure_modes": [
+    {
+      "name": "bearing_wear",
+      "description": "Progressive degradation of rolling-element bearings due to lubricant breakdown, fatigue, or contamination. Increased metal-to-metal contact generates heat and broadband vibration as surface roughness develops on raceways and rolling elements.",
+      "affected_sensors": ["vibration", "temperature"],
+      "symptoms": {
+        "vibration_mm_s": "Gradual rise from baseline 2.8 toward ISO zone C (>7.1 mm/s) over days to weeks; high-frequency components dominate",
+        "temperature_c": "Slow increase from baseline 62°C toward warning threshold 85°C as friction losses increase",
+        "pressure_bar": "Unaffected",
+        "power_kw": "Slight increase in late stages due to mechanical drag"
+      },
+      "typical_progression": "Gradual onset over 2–8 weeks; accelerates sharply in final stage before failure",
+      "recommended_action": "Replace bearing assembly; inspect lubricant supply and shaft alignment as root-cause contributors",
+      "default_urgency": "scheduled",
+      "typical_downtime_hours": 4,
+      "cost_of_inaction_per_day_eur": 850
+    },
+    {
+      "name": "cavitation",
+      "description": "Formation and violent collapse of vapor bubbles inside the pump casing when inlet pressure drops below the fluid's vapor pressure. Bubble implosion causes micro-jet impacts on the impeller, leading to rapid material erosion and flow instability.",
+      "affected_sensors": ["pressure", "vibration"],
+      "symptoms": {
+        "vibration_mm_s": "Erratic high-amplitude spikes superimposed on baseline; characteristic crackling noise in audible range",
+        "temperature_c": "Largely unaffected in early stages",
+        "pressure_bar": "Sudden drop at inlet, typically below 2.0 bar; discharge pressure becomes unstable",
+        "power_kw": "Irregular fluctuation as flow breaks down"
+      },
+      "typical_progression": "Sudden onset when operating conditions change (flow restriction, higher fluid temperature, speed increase); damage accumulates rapidly within hours",
+      "recommended_action": "Inspect and clear inlet piping for blockages; verify NPSH margin; reduce pump speed or increase inlet pressure to restore stable operating point",
+      "default_urgency": "immediate",
+      "typical_downtime_hours": 2,
+      "cost_of_inaction_per_day_eur": 2200
+    },
+    {
+      "name": "misalignment",
+      "description": "Angular or parallel offset between the pump shaft and driver (motor) shaft. Creates a cyclic load reversal once per revolution, placing abnormal stress on bearings, seals, and the coupling. Often introduced during installation or after maintenance.",
+      "affected_sensors": ["vibration", "power"],
+      "symptoms": {
+        "vibration_mm_s": "Persistently elevated from startup; dominant 1× and 2× running-speed frequency components; typically 4.5–8.0 mm/s",
+        "temperature_c": "Mildly elevated at bearing housings due to increased radial load",
+        "pressure_bar": "Unaffected",
+        "power_kw": "Consistently 10–20% above normal baseline due to extra mechanical losses in coupling and bearings"
+      },
+      "typical_progression": "Constant from installation or restart after maintenance; does not worsen in early stages but accelerates bearing and seal wear over months",
+      "recommended_action": "Laser-align shaft coupling to within ±0.05 mm parallel and ±0.05 mm/100 mm angular tolerance; re-check after thermal stabilisation",
+      "default_urgency": "scheduled",
+      "typical_downtime_hours": 6,
+      "cost_of_inaction_per_day_eur": 480
+    },
+    {
+      "name": "seal_leakage",
+      "description": "Failure of the mechanical seal between the rotating shaft and the pump casing, allowing process fluid to escape. Causes include wear of seal faces, spring fatigue, chemical attack, or running dry. Results in pressure loss, environmental contamination, and accelerated shaft wear.",
+      "affected_sensors": ["pressure", "power"],
+      "symptoms": {
+        "vibration_mm_s": "Slightly elevated if leakage causes imbalanced hydraulic forces",
+        "temperature_c": "Unaffected unless dry-running heats seal faces",
+        "pressure_bar": "Gradual decline in discharge pressure as internal leakage increases; may drop 0.5–1.5 bar below expected",
+        "power_kw": "Mild reduction as effective flow decreases; pump runs off best-efficiency point"
+      },
+      "typical_progression": "Gradual over days to weeks; early signs are minor weeping around the seal housing before full leakage develops",
+      "recommended_action": "Replace mechanical seal faces and secondary seals; inspect shaft sleeve for scoring; verify correct flush plan (API Plan 11 or 32)",
+      "default_urgency": "scheduled",
+      "typical_downtime_hours": 3,
+      "cost_of_inaction_per_day_eur": 620
+    },
+    {
+      "name": "imbalance",
+      "description": "Uneven mass distribution on the rotating impeller, caused by erosion, fouling build-up, or blade damage. Generates a centrifugal force rotating at shaft speed that excites radial vibration, shortening bearing and seal life.",
+      "affected_sensors": ["vibration"],
+      "symptoms": {
+        "vibration_mm_s": "Elevated broadband vibration with a sharp dominant peak at 1× running speed; typically 5.0–9.0 mm/s",
+        "temperature_c": "Mildly elevated at bearing housings from increased radial load",
+        "pressure_bar": "Slightly reduced if blade damage has decreased hydraulic efficiency",
+        "power_kw": "Marginally increased due to additional radial bearing forces"
+      },
+      "typical_progression": "Gradual increase as erosion or fouling accumulates; can be sudden if a blade chip or foreign object impact occurs",
+      "recommended_action": "Remove impeller; clean or replace if eroded; dynamic balance to ISO 1940 Grade G2.5 before reinstallation",
+      "default_urgency": "scheduled",
+      "typical_downtime_hours": 4,
+      "cost_of_inaction_per_day_eur": 390
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "predictive-maintenance-agents"
+version = "0.1.0"
+description = "Multi-agent predictive maintenance system for industrial equipment"
+requires-python = ">=3.11"
+dependencies = [
+    # Core agent orchestration
+    "langgraph",
+    "langchain-anthropic",
+    "anthropic",
+
+    # API layer
+    "fastapi",
+    "uvicorn[standard]",
+
+    # Data validation and config
+    "pydantic>=2",
+    "pydantic-settings",
+    "python-dotenv",
+
+    # MCP (Model Context Protocol)
+    "mcp",
+
+    # AI / Knowledge
+    "chromadb",
+    "pymupdf",
+    "langfuse",
+
+    # Data processing
+    "numpy",
+
+    # Infrastructure
+    "redis",
+    "asyncpg",
+
+    # Monitoring dashboard
+    "streamlit",
+
+    # HTTP client (used in tests and MCP)
+    "httpx",
+
+    # Production WSGI/ASGI server
+    "gunicorn",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "httpx",
+    "ruff",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+ignore = []
