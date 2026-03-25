@@ -12,7 +12,6 @@ from src.agents.diagnostics_agent import (
 from src.agents.state import AnomalyAlert, Diagnosis, SensorReading
 from src.data.simulator import SensorSimulator
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
