@@ -1,8 +1,11 @@
-# Must override sqlite3 before importing chromadb — Azure has sqlite3 < 3.35.0
-__import__("pysqlite3")  # noqa: E402
 import sys  # noqa: E402
 
-sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
+# Override sqlite3 with pysqlite3-binary on Azure (system sqlite3 < 3.35.0)
+try:
+    __import__("pysqlite3")
+    sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
+except ModuleNotFoundError:
+    pass
 
 import chromadb  # noqa: E402
 
