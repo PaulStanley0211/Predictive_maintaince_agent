@@ -1,9 +1,10 @@
-__import__("pysqlite3")
-import sys
+# Must override sqlite3 before importing chromadb — Azure has sqlite3 < 3.35.0
+__import__("pysqlite3")  # noqa: E402
+import sys  # noqa: E402
 
 sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
 
-import chromadb
+import chromadb  # noqa: E402
 
 
 class VectorStore:
