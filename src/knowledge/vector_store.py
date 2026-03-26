@@ -1,5 +1,4 @@
 import chromadb
-from chromadb.utils.embedding_functions import DefaultEmbeddingFunction
 
 
 class VectorStore:
@@ -7,10 +6,9 @@ class VectorStore:
 
     def __init__(self) -> None:
         """Create an in-process ChromaDB client and open the knowledge collection."""
-        self._client = chromadb.Client()
+        self._client = chromadb.EphemeralClient()
         self._collection = self._client.get_or_create_collection(
             name="maintenance_knowledge",
-            embedding_function=DefaultEmbeddingFunction(),
         )
 
     def add_documents(self, chunks: list[str], metadatas: list[dict] | None = None) -> None:

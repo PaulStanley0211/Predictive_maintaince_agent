@@ -11,7 +11,12 @@ from src.knowledge.ingestion import setup_knowledge_base
 async def lifespan(app: FastAPI):
     """Build the agent graph and populate the knowledge base at startup."""
     app.state.graph = build_graph()
-    app.state.vector_store = setup_knowledge_base()
+    try:
+        app.state.vector_store = setup_knowledge_base()
+    except Exception as e:
+        import logging
+        logging.warning(f"Knowledge base setup failed (non-fatal): {e}")
+        app.state.vector_store = None
     yield
 
 
