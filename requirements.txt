@@ -8,6 +8,7 @@ pydantic-settings
 python-dotenv
 mcp
 chromadb
+pysqlite3-binary
 pymupdf
 langfuse
 numpy
